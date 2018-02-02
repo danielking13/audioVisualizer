@@ -165,7 +165,8 @@ public class PlayerController implements Initializable {
     
     private void handleReady() {
         Duration duration = mediaPlayer.getTotalDuration();
-        lengthText.setText(duration.toString());
+        double lengthOfTime = duration.toMillis();
+        lengthText.setText(String.format("%.1f ms", lengthOfTime));
         Duration ct = mediaPlayer.getCurrentTime();
         currentText.setText(ct.toString());
         currentVisualizer.start(numBands, vizPane);
@@ -182,7 +183,7 @@ public class PlayerController implements Initializable {
     private void handleUpdate(double timestamp, double duration, float[] magnitudes, float[] phases) {
         Duration ct = mediaPlayer.getCurrentTime();
         double ms = ct.toMillis();
-        currentText.setText(Double.toString(ms));
+        currentText.setText(String.format("%.1f ms", ms));
         timeSlider.setValue(ms);
         
         currentVisualizer.update(timestamp, duration, magnitudes, phases);
@@ -217,5 +218,21 @@ public class PlayerController implements Initializable {
         if (mediaPlayer != null) {
            mediaPlayer.stop(); 
         }
+    }
+    
+    @FXML
+    private void handleTimeSLiderGrab(Event event) {
+        if (mediaPlayer != null) {
+           mediaPlayer.pause(); 
+        }  
+    }
+    
+    @FXML
+    private void handleTimeSliderRelease(Event event) {
+        if (mediaPlayer != null) {
+            mediaPlayer.seek(new Duration(timeSlider.getValue()));
+            currentVisualizer.start(numBands, vizPane);
+            mediaPlayer.play();
+        }  
     }
 }
